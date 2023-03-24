@@ -91,4 +91,12 @@ declare namespace MaptableSDKTypes {
     /** 未读消息数量 */
     unreadNotificationsCount: number;
   };
+  type RoleType = {
+    /** 角色 ID */
+    id: string
+    /** 角色类型 */
+    type: 'project' | 'table' | 'org' | 'datafile'
+    /** 权限 */
+    role: 'admin' | 'editable' | 'readonly'
+  }
 }
