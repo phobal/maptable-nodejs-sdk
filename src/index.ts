@@ -85,6 +85,21 @@ class MaptableSDK {
     const url = `${this.baseUrl}/open/api/v1/workspaces/${workspaceType}/${workspaceId}/roles/`;
     return this.request({ url, method: 'GET' });
   }
+  /** 创建项目 */
+  public async createProject(
+    data: Pick<MaptableSDKTypes.ProjectType, 'name' | 'desc' | 'icon'>,
+  ): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.ProjectType>> {
+    // TODO: URL 可能有问题，会报 400 的错误
+    const url = `${this.baseUrl}/open/api/v1/projects/`;
+    return this.request({
+      url,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: qs.stringify(data),
+    });
+  }
 }
 
 export default MaptableSDK;
