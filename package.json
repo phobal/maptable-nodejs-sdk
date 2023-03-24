@@ -37,6 +37,8 @@
   "author": "phobal <phobal@126.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^1.3.4",
+    "qs": "^6.11.1",
     "tslib": "~2.4"
   },
   "volta": {

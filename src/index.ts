@@ -1,35 +1,80 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+import axios from 'axios'
+import qs from 'qs'
+import type { AxiosRequestConfig } from 'axios'
+
+interface AuthResponse {
+  token: string
+  refreshToken: string
 }
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
+class MaptableSDK {
+  private appId: string
+  private appSecret: string
+  private token: string
+  private refreshToken: string
+  private baseUrl = 'https://maptable.com'
+
+  constructor(appId: string, appSecret: string) {
+    this.appId = appId
+    this.appSecret = appSecret
+    this.token = ''
+    this.refreshToken = ''
+  }
+
+  private async authenticate(): Promise<void> {
+    const url = `${this.baseUrl}/open/api/v1/auth/`
+    const data = { appId: this.appId, appSecret: this.appSecret }
+    const response = await axios.post<MaptableSDKTypes.Response<AuthResponse>>(
+      url,
+      qs.stringify(data),
+    )
+    this.token = response?.data?.detail?.token
+  }
+
+  private async getAccessToken(): Promise<string> {
+    if (!this.token) {
+      await this.authenticate()
+    }
+    return this.token
+  }
+
+  private async request<T>(config: AxiosRequestConfig): Promise<MaptableSDKTypes.Response<T>> {
+    const accessToken = await this.getAccessToken()
+    const headers = { Authorization: accessToken }
+    try {
+      const response = await axios.request<MaptableSDKTypes.Response<T>>({
+        ...config,
+        headers: {
+          ...config.headers,
+          ...headers,
+        },
+      })
+      return response.data
+    } catch (error) {
+      if (error) {
+        throw new Error(`Maptable API error: ${error}`)
+      } else {
+        throw new Error(`Network error: ${error}`)
+      }
+    }
+  }
+
+  /** 获取所有的工作区列表 */
+  public async getAllWorkspaces(): Promise<
+    MaptableSDKTypes.Response<MaptableSDKTypes.WorkspaceType[]>
+  > {
+    const url = `${this.baseUrl}/open/api/v1/workspaces/`
+    return this.request({ url, method: 'GET' })
+  }
+
+  /** 读取工作区详情 */
+  public async getWorkspaceDetail(
+    workspaceType: MaptableSDKTypes.WorkspaceType['type'],
+    workspaceId: string,
+  ): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.WorkspaceType>> {
+    const url = `${this.baseUrl}/open/api/v1/workspaces/${workspaceType}/${workspaceId}/`
+    return this.request({ url, method: 'GET' })
+  }
 }
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: any) {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
-}
+export default MaptableSDK
