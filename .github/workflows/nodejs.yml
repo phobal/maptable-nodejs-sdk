@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g pnpm
+      - run: pnpm install
       - run: pnpm test
       - run: pnpm run build
         env:
