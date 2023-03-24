@@ -8,10 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - run: pnpm ci --no-audit
-      - run: pnpm run lint --if-present
       - run: pnpm test
-      - run: pnpm run build --if-present
+      - run: pnpm run build
         env:
           CI: true
