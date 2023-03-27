@@ -99,4 +99,39 @@ declare namespace MaptableSDKTypes {
     /** 权限 */
     role: 'admin' | 'editable' | 'readonly'
   }
+  /** 表格列信息 */
+  type Column = {
+    /** 列名称 */
+    name: string
+    /** 列类型
+     * @param multiLineText 多行文本
+     * @param number 数字
+     * @param datetime 日期时间
+     * @param singleChoice 单选
+     * @param coordinate 坐标
+     */
+    type: 'multiLineText' | 'number' | 'datetime' | 'singleChoice' | 'coordinate'
+    /** 列选项，number datetime singleChoice 时需要 */
+    typeOptions?: {
+      /** 数值格式，列类型为 number 时生效 */
+      format: 'number' | 'percentage' | 'commaNumber'
+      /** 数值精度：0 - 5，列类型为 number 时生效 */
+      precision: number
+      /** 日期格式，列类型为 datetime 时生效 */
+      dateFormat: 'year/month/day' | 'month/day/year' | 'detail'
+      /** 时间格式，，列类型为 datetime 时生效 */
+      timeFormat: 'hidden' | '24-hour-clock' | '12-hour-clock'
+      /** 单选选项, 为空时自动创建，列类型为 singleChoice 时生效 */
+      choices?: Array<{
+        /** 选项名：当选项名和单元格值相等时使用该选项，列类型为 singleChoice 时生效 */
+        name: string
+        /** 选项颜色，为空时随机设置颜色，列类型为 singleChoice 时生效 */
+        color?: string
+      }>
+    }
+    /** 是否为主列：只能设置一个，且列类型为：multiLineText number datetime */
+    isPrimaryKey: boolean
+  }
+
+  type Row = any
 }
