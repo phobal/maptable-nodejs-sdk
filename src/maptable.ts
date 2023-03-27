@@ -1,26 +1,43 @@
 import fs from 'fs';
+import path from 'path';
 import axios from 'axios';
 import qs from 'qs';
 import FormData from 'form-data';
 import type { AxiosRequestConfig } from 'axios';
+import { writeFileSync } from './utils';
 
 interface AuthResponse {
   token: string;
   refreshToken: string;
 }
+const TEMP_PATH = `${path.resolve()}/node_modules/maptable-nodejs-sdk/dist/src/tempData`;
+const COLOUMS_PATH = `${TEMP_PATH}/columns.json`;
+const ROWS_PATH = `${TEMP_PATH}/rows.csv`;
 
 class MaptableSDK {
   private appId: string;
   private appSecret: string;
   private token: string;
   private refreshToken: string;
+  private tempPath: string;
+  private columnsPath: string;
+  private rowsPath: string;
   private baseUrl = 'https://maptable.com';
 
-  constructor(appId: string, appSecret: string) {
+  constructor(
+    appId: string,
+    appSecret: string,
+    tempPath?: string,
+    columnsPath?: string,
+    rowsPath?: string,
+  ) {
     this.appId = appId;
     this.appSecret = appSecret;
     this.token = '';
     this.refreshToken = '';
+    this.tempPath = tempPath || TEMP_PATH;
+    this.columnsPath = columnsPath || COLOUMS_PATH;
+    this.rowsPath = rowsPath || ROWS_PATH;
   }
 
   private async authenticate(): Promise<void> {
@@ -44,15 +61,13 @@ class MaptableSDK {
     config: AxiosRequestConfig,
   ): Promise<MaptableSDKTypes.Response<T>> {
     const accessToken = await this.getAccessToken();
-    const headers = { Authorization: accessToken };
+    const headers = { Authorization: accessToken, ...(config.headers || {}) };
+    const configOptions = {
+      ...config,
+      headers
+    }
     try {
-      const response = await axios.request<MaptableSDKTypes.Response<T>>({
-        ...config,
-        headers: {
-          ...config.headers,
-          ...headers,
-        },
-      });
+      const response = await axios.request<MaptableSDKTypes.Response<T>>(configOptions);
       return response.data;
     } catch (error) {
       if (error) {
@@ -107,16 +122,65 @@ class MaptableSDK {
     projectId: string;
     name: string;
     skipFirstRow: boolean;
-    columns: fs.PathLike;
-    rows: fs.PathLike;
+    columns: MaptableSDKTypes.Column[];
+    rows: MaptableSDKTypes.Row[];
   }): Promise<MaptableSDKTypes.Response<any>> {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/import/`;
+    fs.mkdirSync(this.tempPath, { recursive: true });
+    writeFileSync(COLOUMS_PATH, data.columns);
+    writeFileSync(ROWS_PATH, data.rows);
     const formData = new FormData(); // 创建一个 FormData 对象
-    formData.append('projectId', data.projectId)
-    formData.append('name', data.name)
-    formData.append('skipFirstRow', data.skipFirstRow)
-    formData.append('rows', fs.createReadStream(data.rows));
-    formData.append('columns', fs.createReadStream(data.columns));
+    formData.append('projectId', data.projectId);
+    formData.append('name', data.name);
+    formData.append('skipFirstRow', data.skipFirstRow);
+    formData.append('rows', fs.createReadStream(this.rowsPath));
+    formData.append('columns', fs.createReadStream(this.columnsPath));
+    return this.request({
+      url,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData,
+    });
+  }
+  /** 获取表格详情 */
+  public async getTableDetail({
+    tableId,
+    viewId,
+    lastSegmentRowID,
+  }: {
+    /** 表格 ID */
+    tableId: string;
+    /** 视图 ID */
+    viewId?: string;
+    /** 前一分片最后一行的 ID，为空时请求第一分片 */
+    lastSegmentRowID?: string;
+  }): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.TableDetail>> {
+    const url = `${
+      this.baseUrl
+    }/open/api/v1/tablenodes/${tableId}/partial/?${qs.stringify({
+      viewId,
+      lastSegmentRowID,
+    })}`;
+    return this.request({ url, method: 'GET' });
+  }
+  public async appendData({
+    tableId,
+    columns,
+    rows,
+  }: {
+    tableId: string;
+    columns: MaptableSDKTypes.Column[];
+    rows: MaptableSDKTypes.Row[];
+  }): Promise<MaptableSDKTypes.Response<any>> {
+    const url = `${this.baseUrl}/open/api/v1/tablenodes/${tableId}/rows/append/`;
+    await fs.mkdirSync(this.tempPath, { recursive: true });
+    await writeFileSync(COLOUMS_PATH, columns);
+    await writeFileSync(ROWS_PATH, rows);
+    const formData = new FormData(); // 创建一个 FormData 对象
+    formData.append('rows', fs.createReadStream(this.rowsPath));
+    formData.append('columns', fs.createReadStream(this.columnsPath));
     return this.request({
       url,
       method: 'POST',

@@ -134,4 +134,27 @@ declare namespace MaptableSDKTypes {
   }
 
   type Row = any
+
+  type TableDetail = {
+    /** ID */
+    id: number
+    /** 表格类型 */
+    type: TableNodesType['type']
+    /** 分片类型
+     * @param segmentStart 第一分片
+     * @param segmentFrame 行数据分片
+     */
+    segmentType: 'segmentStart' | 'segmentFrame'
+    /** 是否有更多数据，false 代表已获取全部数据 */
+    more: boolean
+    /** 列数据， segmentType = segmentStart 时返回 */
+    columns: Column[]
+    /** 行数据 */
+    rows: Row[]
+    /** 视图列表，segmentType = segmentStart 时返回 */
+    views: Array<{
+      columns: Column[]
+      rows: Row[]
+    }>
+  }
 }
