@@ -215,7 +215,7 @@ class MaptableSDK {
     return this.request({ url, method: 'POST' });
   }
   /** 从回收站中永久删除某张数据表 */
-  public async handDeleteTableFromRecycleBin(
+  public async hardDeleteTableFromRecycleBin(
     tableId: string,
   ): Promise<MaptableSDKTypes.Response<any>> {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/recycle/${tableId}/`;
