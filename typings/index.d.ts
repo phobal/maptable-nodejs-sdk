@@ -157,4 +157,16 @@ declare namespace MaptableSDKTypes {
       rows: Row[]
     }>
   }
+
+  type AppendResponse = TableNodesType & {
+    order: number
+    parentID: number | null
+    projectID: number
+    roleInherited: boolean
+    addedColumns: Column[]
+    appendRowIDs: {
+      [key: string]: string
+    }
+    importErr: string | null
+  }
 }

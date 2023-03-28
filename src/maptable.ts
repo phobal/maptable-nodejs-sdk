@@ -121,7 +121,7 @@ class MaptableSDK {
   public async createTable(data: {
     projectId: string;
     name: string;
-    skipFirstRow: boolean;
+    skipFirstRow?: boolean;
     columns: MaptableSDKTypes.Column[];
     rows: MaptableSDKTypes.Row[];
   }): Promise<MaptableSDKTypes.Response<any>> {
@@ -130,16 +130,16 @@ class MaptableSDK {
     writeFileSync(COLOUMS_PATH, data.columns);
     writeFileSync(ROWS_PATH, data.rows);
     const formData = new FormData(); // 创建一个 FormData 对象
-    formData.append('projectId', data.projectId);
+    formData.append('projectID', data.projectId);
     formData.append('name', data.name);
-    formData.append('skipFirstRow', data.skipFirstRow);
+    formData.append('skipFirstRow', String(data.skipFirstRow || false));
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
     return this.request({
       url,
       method: 'POST',
       headers: {
-        'Content-Type': 'multipart/form-data',
+        ...formData.getHeaders(),
       },
       data: formData,
     });
@@ -165,15 +165,20 @@ class MaptableSDK {
     })}`;
     return this.request({ url, method: 'GET' });
   }
+  /** 往表格追加行数据 */
   public async appendData({
     tableId,
+    skipFirstRow,
+    autoCreateColumn,
     columns,
     rows,
   }: {
     tableId: string;
+    skipFirstRow?: boolean;
+    autoCreateColumn?: boolean;
     columns: MaptableSDKTypes.Column[];
     rows: MaptableSDKTypes.Row[];
-  }): Promise<MaptableSDKTypes.Response<any>> {
+  }): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.AppendResponse>> {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/${tableId}/rows/append/`;
     await fs.mkdirSync(this.tempPath, { recursive: true });
     await writeFileSync(COLOUMS_PATH, columns);
@@ -181,6 +186,8 @@ class MaptableSDK {
     const formData = new FormData(); // 创建一个 FormData 对象
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
+    formData.append('skipFirstRow', String(skipFirstRow || false));
+    formData.append('autoCreateColumn', String(autoCreateColumn || false));
     return this.request({
       url,
       method: 'POST',
