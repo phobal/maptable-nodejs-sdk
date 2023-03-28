@@ -106,7 +106,6 @@ class MaptableSDK {
   public async createProject(
     data: Pick<MaptableSDKTypes.ProjectType, 'name' | 'desc' | 'icon'>,
   ): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.ProjectType>> {
-    // TODO: URL 可能有问题，会报 400 的错误
     const url = `${this.baseUrl}/open/api/v1/projects/`;
     return this.request({
       url,
@@ -114,7 +113,7 @@ class MaptableSDK {
       headers: {
         'Content-Type': 'application/json',
       },
-      data: qs.stringify(data),
+      data,
     });
   }
   /** 创建表格 */

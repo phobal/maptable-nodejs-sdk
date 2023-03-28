@@ -62,7 +62,7 @@ declare namespace MaptableSDKTypes {
     name: string;
     /** 项目描述 */
     desc: string;
-    /** 项目图标 */
+    /** 项目图标, 注意这里的 icon 不能为空字符串 */
     icon: string;
     /** 更新时间 */
     updateTime: string;
