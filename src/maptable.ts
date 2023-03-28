@@ -128,11 +128,14 @@ class MaptableSDK {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/import/`;
     fs.mkdirSync(this.tempPath, { recursive: true });
     await writeFileSync(COLOUMS_PATH, data.columns);
-    await writeCSVFileSync(this.rowsPath, data?.rows)
+    await writeCSVFileSync(this.rowsPath, data?.rows);
     const formData = new FormData(); // 创建一个 FormData 对象
     formData.append('projectID', String(data.projectId));
     formData.append('name', String(data.name));
-    formData.append('skipFirstRow', String(data.skipFirstRow === false ? false : true));
+    formData.append(
+      'skipFirstRow',
+      String(data.skipFirstRow === false ? false : true),
+    );
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
     return this.request({
@@ -182,7 +185,7 @@ class MaptableSDK {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/${tableId}/rows/append/`;
     await fs.mkdirSync(this.tempPath, { recursive: true });
     await writeFileSync(this.columnsPath, columns);
-    await writeCSVFileSync(this.rowsPath, rows)
+    await writeCSVFileSync(this.rowsPath, rows);
     const formData = new FormData(); // 创建一个 FormData 对象
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
@@ -196,6 +199,27 @@ class MaptableSDK {
       },
       data: formData,
     });
+  }
+  /** 删除数据表到回收站 */
+  public async deleteTableToRecycleBin(
+    tableId: string,
+  ): Promise<MaptableSDKTypes.Response<any>> {
+    const url = `${this.baseUrl}/open/api/v1/tablenodes/${tableId}/`;
+    return this.request({ url, method: 'DELETE' });
+  }
+  /** 从回收站中恢复数据表 */
+  public async restoreTableFromRecycleBin(
+    tableId: string,
+  ): Promise<MaptableSDKTypes.Response<any>> {
+    const url = `${this.baseUrl}/open/api/v1/tablenodes/recycle/${tableId}/`;
+    return this.request({ url, method: 'POST' });
+  }
+  /** 从回收站中永久删除某张数据表 */
+  public async handDeleteTableFromRecycleBin(
+    tableId: string,
+  ): Promise<MaptableSDKTypes.Response<any>> {
+    const url = `${this.baseUrl}/open/api/v1/tablenodes/recycle/${tableId}/`;
+    return this.request({ url, method: 'DELETE' });
   }
 }
 
