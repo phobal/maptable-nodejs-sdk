@@ -4,7 +4,7 @@ import axios from 'axios';
 import qs from 'qs';
 import FormData from 'form-data';
 import type { AxiosRequestConfig } from 'axios';
-import { writeFileSync } from './utils';
+import { writeFileSync, writeCSVFileSync } from './utils';
 
 interface AuthResponse {
   token: string;
@@ -13,7 +13,6 @@ interface AuthResponse {
 const TEMP_PATH = `${path.resolve()}/node_modules/maptable-nodejs-sdk/dist/src/tempData`;
 const COLOUMS_PATH = `${TEMP_PATH}/columns.json`;
 const ROWS_PATH = `${TEMP_PATH}/rows.csv`;
-
 class MaptableSDK {
   private appId: string;
   private appSecret: string;
@@ -64,10 +63,12 @@ class MaptableSDK {
     const headers = { Authorization: accessToken, ...(config.headers || {}) };
     const configOptions = {
       ...config,
-      headers
-    }
+      headers,
+    };
     try {
-      const response = await axios.request<MaptableSDKTypes.Response<T>>(configOptions);
+      const response = await axios.request<MaptableSDKTypes.Response<T>>(
+        configOptions,
+      );
       return response.data;
     } catch (error) {
       if (error) {
@@ -126,12 +127,12 @@ class MaptableSDK {
   }): Promise<MaptableSDKTypes.Response<any>> {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/import/`;
     fs.mkdirSync(this.tempPath, { recursive: true });
-    writeFileSync(COLOUMS_PATH, data.columns);
-    writeFileSync(ROWS_PATH, data.rows);
+    await writeFileSync(COLOUMS_PATH, data.columns);
+    await writeCSVFileSync(this.rowsPath, data?.rows)
     const formData = new FormData(); // 创建一个 FormData 对象
-    formData.append('projectID', data.projectId);
-    formData.append('name', data.name);
-    formData.append('skipFirstRow', String(data.skipFirstRow || false));
+    formData.append('projectID', String(data.projectId));
+    formData.append('name', String(data.name));
+    formData.append('skipFirstRow', String(data.skipFirstRow === false ? false : true));
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
     return this.request({
@@ -176,16 +177,16 @@ class MaptableSDK {
     skipFirstRow?: boolean;
     autoCreateColumn?: boolean;
     columns: MaptableSDKTypes.Column[];
-    rows: MaptableSDKTypes.Row[];
+    rows: MaptableSDKTypes.Row;
   }): Promise<MaptableSDKTypes.Response<MaptableSDKTypes.AppendResponse>> {
     const url = `${this.baseUrl}/open/api/v1/tablenodes/${tableId}/rows/append/`;
     await fs.mkdirSync(this.tempPath, { recursive: true });
-    await writeFileSync(COLOUMS_PATH, columns);
-    await writeFileSync(ROWS_PATH, rows);
+    await writeFileSync(this.columnsPath, columns);
+    await writeCSVFileSync(this.rowsPath, rows)
     const formData = new FormData(); // 创建一个 FormData 对象
     formData.append('rows', fs.createReadStream(this.rowsPath));
     formData.append('columns', fs.createReadStream(this.columnsPath));
-    formData.append('skipFirstRow', String(skipFirstRow || false));
+    formData.append('skipFirstRow', String(skipFirstRow || true));
     formData.append('autoCreateColumn', String(autoCreateColumn || false));
     return this.request({
       url,
