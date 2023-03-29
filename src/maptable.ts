@@ -13,7 +13,7 @@ interface AuthResponse {
 const TEMP_PATH = `${path.resolve()}/node_modules/maptable-nodejs-sdk/dist/src/tempData`;
 const COLOUMS_PATH = `${TEMP_PATH}/columns.json`;
 const ROWS_PATH = `${TEMP_PATH}/rows.csv`;
-class MaptableSDK {
+class Maptable {
   private appId: string;
   private appSecret: string;
   private token: string;
@@ -223,4 +223,4 @@ class MaptableSDK {
   }
 }
 
-export default MaptableSDK;
+export default Maptable;

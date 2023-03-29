@@ -1,8 +1,8 @@
-import MaptableSDK from "./maptable";
+import Maptable from "./maptable";
 import { writeFileSync, writeCSVFileSync } from './utils'
 
+export default Maptable
 export {
-  MaptableSDK,
   writeFileSync,
   writeCSVFileSync,
 }
