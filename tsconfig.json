@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2016",
     "lib": ["ES2016"],
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "dist",
     "module": "Node16",
     "esModuleInterop": true,

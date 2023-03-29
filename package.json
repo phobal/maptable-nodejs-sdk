@@ -1,9 +1,9 @@
 {
   "name": "maptable-nodejs-sdk",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Maptable OpenAPI SDK - Node.js Version",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": ">= 16.4"
   },
@@ -20,7 +20,9 @@
     "dist",
     "README.md",
     "LICENSE",
-    "package.json"
+    "package.json",
+    "tsconfig.json",
+    "typings"
   ],
   "devDependencies": {
     "@types/jest": "~29.2",
