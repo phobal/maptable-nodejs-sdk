@@ -5,6 +5,7 @@ import qs from 'qs';
 import FormData from 'form-data';
 import type { AxiosRequestConfig } from 'axios';
 import { writeFileSync, writeCSVFileSync } from './utils';
+import * as MaptableSDKTypes from '../typings';
 
 interface AuthResponse {
   token: string;
