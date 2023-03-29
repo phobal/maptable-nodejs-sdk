@@ -1,12 +1,27 @@
 {
   "name": "maptable-nodejs-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Maptable OpenAPI SDK - Node.js Version",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "engines": {
-    "node": ">= 18.12 <19"
+    "node": ">= 16.4"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phobal/maptable-sdk.git"
+  },
+  "keywords": [
+    "maptable",
+    "sdk",
+    "nodejs"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
   "devDependencies": {
     "@types/jest": "~29.2",
     "@types/node": "~18",
