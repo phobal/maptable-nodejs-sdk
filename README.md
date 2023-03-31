@@ -36,7 +36,8 @@ To use the getAllWorkspaces() method, you must first create an instance of the M
 
 ## API
 
-### getAllWorkspaces
+<details>
+<summary>getAllWorkspaces</summary>
 
 The getAllWorkspaces() method is used to retrieve a list of all workspaces associated with the current user's account.
 
@@ -77,8 +78,10 @@ try {
   ]
 }
 ```
+</details>
 
-### getWorkspaceDetail
+<details>
+<summary>getWorkspaceDetail</summary>
 
 The getWorkspaceDetail() method is used to retrieve details about a specific workspace, identified by its workspaceType and workspaceId.
 
@@ -117,8 +120,10 @@ The getWorkspaceDetail() method accepts two parameters:
   }
 }
 ```
+</details>
 
-### getWorkspaceRoles
+<details>
+<summary>getWorkspaceRoles</summary>
 
 The getWorkspaceRoles() method is used to retrieve the roles and permissions associated with a specific workspace, identified by its workspaceType and workspaceId.
 
@@ -160,8 +165,10 @@ The getWorkspaceDetail() method accepts two parameters:
   }
 }
 ```
+</details>
 
-### createProject
+<details>
+<summary>createProject</summary>
 
 The createProject() method is used to create a new project in the Maptable API.
 
@@ -196,7 +203,10 @@ The createProject() method accepts one parameter:
   * name: required, A string that specifies the name of the project.
   * desc: required, A string that provides a description of the project.
   * icon: required, A string that specifies the project's icon, it can't set empty string
-### createTable
+</details>
+
+<details>
+<summary>createTable</summary>
 
 The createTable() method is used to create a new table in the user's project.
 
@@ -249,7 +259,10 @@ try {
 
 refs: /typings/index.d.ts
 
-### getTableDetail
+</details>
+
+<details>
+<summary>getTableDetail</summary>
 
 The getTableDetail() method is used to retrieve details for a specific table, including its columns and data. This method can also be used to request data in segments, with each segment containing a specified number of rows.
 
@@ -366,7 +379,10 @@ The getTableDetail() method accepts one parameter, an object that specifies the 
      }
 }
 ```
-### appendData
+</details>
+
+<details>
+<summary>appendData</summary>
 
 The appendData() method is used to append rows of data to a specified table in the Maptable API.
 
@@ -408,7 +424,10 @@ The appendData() method accepts an object parameter that specifies the details o
   * type: A string that specifies the type of the column, such as "text", "number", or "email".
 * rows: An array of arrays representing the data to be appended. Each inner array represents a single row, with values corresponding to the columns in the same order as they appear in the columns property.
 
-### deleteTableToRecycleBin
+</details>
+
+<details>
+<summary>deleteTableToRecycleBin</summary>
 
 The deleteTableToRecycleBin() method is used to delete a table in the Maptable API and move it to the recycle bin.
 
@@ -430,7 +449,10 @@ try {
 
 * tableId, Required, the unique identifier of the table
 
-### restoreTableFromRecycleBin
+</details>
+
+<details>
+<summary>restoreTableFromRecycleBin</summary>
 
 The restoreTableFromRecycleBin() method is used to restore a table in the Maptable API and from the recycle bin.
 
@@ -452,7 +474,10 @@ try {
 
 * tableId, Required, the unique identifier of the table
 
-### hardDeleteTableFromRecycleBin
+</details>
+
+<details>
+<summary>hardDeleteTableFromRecycleBin</summary>
 
 The hardDeleteTableFromRecycleBin() method is used to permanently delete a table from the recycle bin in the Maptable API.
 
