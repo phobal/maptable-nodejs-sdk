@@ -45,7 +45,12 @@ class Maptable {
     const data = { appId: this.appId, appSecret: this.appSecret };
     const response = await axios.post<MaptableSDKTypes.Response<AuthResponse>>(
       url,
-      qs.stringify(data),
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
     );
     this.token = response?.data?.detail?.token;
   }
