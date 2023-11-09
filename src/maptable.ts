@@ -14,6 +14,8 @@ interface AuthResponse {
 const TEMP_PATH = `${path.resolve()}/node_modules/maptable-nodejs-sdk/dist/src/tempData`;
 const COLOUMS_PATH = `${TEMP_PATH}/columns.json`;
 const ROWS_PATH = `${TEMP_PATH}/rows.csv`;
+const defaultBaseUrl = 'https://maptable.com';
+
 class Maptable {
   private appId: string;
   private appSecret: string;
@@ -22,11 +24,12 @@ class Maptable {
   private tempPath: string;
   private columnsPath: string;
   private rowsPath: string;
-  private baseUrl = 'https://maptable.com';
+  private baseUrl: string;
 
   constructor(
     appId: string,
     appSecret: string,
+    baseURL?: string,
     tempPath?: string,
     columnsPath?: string,
     rowsPath?: string,
@@ -38,6 +41,7 @@ class Maptable {
     this.tempPath = tempPath || TEMP_PATH;
     this.columnsPath = columnsPath || COLOUMS_PATH;
     this.rowsPath = rowsPath || ROWS_PATH;
+    this.baseUrl = baseURL || defaultBaseUrl;
   }
 
   private async authenticate(): Promise<void> {

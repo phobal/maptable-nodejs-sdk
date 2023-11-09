@@ -1,6 +1,6 @@
 {
   "name": "maptable-nodejs-sdk",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Maptable OpenAPI SDK - Node.js Version",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
